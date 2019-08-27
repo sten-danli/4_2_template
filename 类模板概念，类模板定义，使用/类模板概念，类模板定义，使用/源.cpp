@@ -26,13 +26,19 @@ int getlenth(const string& s)
 int add(int tmp1, int tmp2) { return tmp1 + tmp2; }
 //用上面的函数定义一个函数指针类型以便用在另外一个函数的参数里：
 typedef int (*padd)(int, int);
-//然后就可以把上面的函数在下面的函数里面当作参数使用了：
+//然后就可以把上面的函数在下面的函数里面当作参数使用了
 template<typename T,typename F>
 int funcadd(const T &a, T const &b, F x)
 {
 	 int result = x(a, b);
 	 return result;
 
+}
+template<typename T, typename F=padd>
+int funcadd2(const T& a, T const& b, F pointerAdd=add)
+{
+	int result= add(a, b);
+	return result;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //三：函数模板趣味用法举例；可调用对象。如有问题先看未归类知识点的第一节课【可调用对象】；
@@ -52,12 +58,50 @@ public://重载圆括号
 	}
 };
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
+//四：默认类模板
+//a）类模板，类模板明后边必须用<>来提供额外的信息。<>表示这是一个模板。
+
+template<typename T=string, int size=5>//T=string 和int size=5就是默认的缺省值，如果某一个参数有缺省值
+//那么后面所有都要给出。
+class myarray
+{
+
+};
+
+//b)函数模板
+template <typename T, typename F = tc>
+//void testfunc(const int&i, ocnst int&j, tc funcpint =tc())//不写成类模板的话写成函数的话。
+void testfunc(const T & i, const T & j, F funcpoint = F())
+{
+	cout << funcpoint(i, j) << endl;
+}
 
 int main()
 {	
+	int result = funcadd2(99, 1, add);
+	cout << result;
+
+	//对四b）：默认类模板
+	//如果我们像这样调用函数tetsfunc(1, 2)而不是这样调用的话funcadd(1, 2, obj)，就要这样写：
+	//template <typename T, typename F = tc>
+	//void testfunc(const T & i, const T & j, F funcpoint = F())
+	testfunc(2, 6);
+	//(1)同时给模板参数和函数参数提供缺省值
+	//(2)注意写法 F funcpoint=F()
+	//(3)tc类要重载运算符int operator()
+
+	//对四a）：默认类模板
+	//myarray<>myarr;//完全用模板缺省值
+	//myarray<int > def;//提供一个非缺省值，另外一个第二个参数用的是缺省值。
+	//定义函数template<typename T=string, int size=5>里的意思就是T=int, 第二个参使用默认缺省值5.
+
+	//对三
 	tc obj;
 	 funcadd(3, 4, add);
-	 funcadd(1, 2, obj);
+	 funcadd(1, 2, obj);//也可以这样：funcadd(1, 2, tc());
+	 //如果要让funcadd模板类可调用tc这个类，那么tc这个类必须是【可调用对象】，
+	 //也就是说在这个类里面必须要有重载（）运算符int operator()(int a, int b)，而且他的参数和
+	//返回值要和模板函数里面的调用格式相同，才能正常的调用。
 	
 
 	//对一
