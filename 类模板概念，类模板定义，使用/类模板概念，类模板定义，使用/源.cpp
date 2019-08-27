@@ -12,7 +12,7 @@ template<typename T>//1.定义类名
 		return 0;
 	return c.size();
 }
-
+ //上面的函数我自己写成了这样。如下:
 int getlenth(const string& s)
 {
 	if (s.empty())
@@ -27,22 +27,47 @@ int add(int tmp1, int tmp2) { return tmp1 + tmp2; }
 //用上面的函数定义一个函数指针类型以便用在另外一个函数的参数里：
 typedef int (*padd)(int, int);
 //然后就可以把上面的函数在下面的函数里面当作参数使用了：
-void funcadd(int a, int b, padd x)
+template<typename T,typename F>
+int funcadd(const T &a, T const &b, F x)
 {
-	int result = x(a, b);
+	 int result = x(a, b);
+	 return result;
+
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+//三：函数模板趣味用法举例；可调用对象。如有问题先看未归类知识点的第一节课【可调用对象】；
+class tc
+{
+	
+public:
+	tc() { cout << "构造函数执行"<<endl; }
+	tc(const tc&c)
+	{
+		cout << "拷贝构造函数执行" << endl;
+	}
+public://重载圆括号
+	int operator()(int a, int b)
+	{
+		return a + b;
+	}
+};
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main()
-{
-	string mystr = "i am c++ profi";
-	cout<<getlength(mystr);
+{	
+	tc obj;
+	 funcadd(3, 4, add);
+	 funcadd(1, 2, obj);
 	
 
-	myvector<int> myvec1;//这个时候，编译器就给我们生成了一个具体的类。
-	myvector<double> myvec11;
-	myvector<string> myvec12;
+	//对一
+	//string mystr = "i am c++ profi";
+	//cout<<getlength(mystr);
+	//
+
+	//myvector<int> myvec1;//这个时候，编译器就给我们生成了一个具体的类。
+	//myvector<double> myvec11;
+	//myvector<string> myvec12;
 	//myvector是类模板名，他不是一个类名，类模板是用来实例化类（类型）用的。
 	//所以myvector<double>，myvector<string>加上<>才是类型名（实例化了的类型）。
 	//所以一个实例化了的类型从会用尖括号包着模板参数。  
